@@ -1,0 +1,109 @@
+import tkinter as tk
+from tkinter import messagebox
+
+
+def itog_day():
+    global zp
+    day = EnterDay.get()
+    d30 = int(Det30.get())
+    d60 = int(Det60.get())
+    v60 = int(Vz60.get())
+    v2 = int(Vz2.get())
+    if day == 'суббота' or day == 'воскресенье':
+        zpv = ((d30 * 1500 + d60 * 2800 + v60 * 2900 + v2 * 5300) * 30) / 100
+        with open('How.txt', 'a+', encoding='utf-8') as file:
+            file.write(str(zpv) + '\n')
+    elif day == 'понедельник' or day == 'вторник' or day == 'среда' or day == 'четверг' or day == 'пятница':
+        zpv = ((d30 * 1350 + d60 * 2400 + v60 * 2500 + v2 * 4500) * 30) / 100
+        with open('How.txt', 'a+', encoding='utf-8') as file:
+            file.write(str(zpv) + '\n')
+    else:
+        tk.messagebox.showinfo('Ошибка:', ('Введите день недели правильно!'))
+    tk.messagebox.showinfo('Сумма за сегодня:', str(zpv))
+
+    EnterDay.delete(0, 'end') #удаляет все что было в текстовом поле после нажатия ок
+    Det30.delete(0, 'end')
+    Det60.delete(0, 'end')
+    Vz60.delete(0, 'end')
+    Vz2.delete(0, 'end')
+
+
+def itog():
+    with open('How.txt', 'r') as file:
+        lines = file.readlines()
+        sum = 0
+        for line in lines:
+            line = line.rstrip()
+            sum += float(line)
+        tk.messagebox.showinfo('За все время вы заработали:', str(sum))
+
+    file.close
+
+
+def dell():
+    path = 'How.txt'
+    try:
+        with open(path, 'r+') as f:
+            f.truncate()
+    except IOError:
+        print('Failure')
+    tk.messagebox.showinfo('Готово', ('Данные за прошлый месяц удалены'))
+
+
+def enterclick(e):
+    itog_day()
+
+
+window = tk.Tk() 
+
+window.resizable(width=False, height=False) 
+
+window.title('Зарплата')  
+
+window.geometry('720x360')
+
+window['bg'] = 'dark grey'
+
+vopros = tk.Label(window, text='Введите день недели: ', font=('Arial Bold', 15), fg='black', bg='dark grey')  # сам текст, жирность и размер
+
+vopros.place(x=25, y=25) 
+
+EnterDay = tk.Entry(fg='grey', width=40)  # Окно для ввода текста
+EnterDay.place(x=25, y=65)  
+EnterDay.focus()
+
+
+btn = tk.Button(window, text='Ок', command=itog_day, width='40', height='1', fg='grey', bg='black')  # создаем кнопку command = AddVopros добавить после ок что бы функция работала
+btn.place(x=220, y=200) 
+
+window.bind('<Return>', enterclick)
+
+btn1 = tk.Button(window, text='Посмотреть свои копейки за весь месяц', command=itog, width='40', height='1', fg='grey', bg='black')
+btn1.place(x=220, y=250)
+
+newmonth = tk.Button(window, text='Считаем с нового месяца?', command=dell,  width='40', height='1', fg='grey', bg='black')
+newmonth.place(x=220, y=300)
+
+# попробую создать еще 4 окна ввода
+dt30 = tk.Label(window, text='Кол-во занятий по 30 мин: ', font=('Arial Bold', 10), fg='black', bg='dark grey')
+dt30.place(x=380, y=25)
+Det30 = tk.Entry(fg='grey', width=15, )
+Det30.place(x=570, y=25)
+
+dt60 = tk.Label(window, text='Кол-во занятий по 60 мин(Д): ', font=('Arial Bold', 10), fg='black', bg='dark grey')
+dt60.place(x=380, y=55)
+Det60 = tk.Entry(fg='grey', width=15)
+Det60.place(x=570, y=55)
+
+vz = tk.Label(window, text='Кол-во занятий по 60 мин(В): ', font=('Arial Bold', 10), fg='black', bg='dark grey')
+vz.place(x=380, y=85)
+Vz60 = tk.Entry(fg='grey', width=15)
+Vz60.place(x=570, y=85)
+
+vz2 = tk.Label(window, text='Кол-во занятий по 60 мин(В2): ', font=('Arial Bold', 10), fg='black', bg='dark grey')
+vz2.place(x=380, y=115)
+Vz2 = tk.Entry(fg='grey', width=15)
+Vz2.place(x=570, y=115)
+
+
+window.mainloop()  
